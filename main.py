@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -48,16 +48,16 @@ def update_pet(pet: Pet):
             pet_index = i
             break
     else:
-        return {"detail": "Pet not found."}
+        raise HTTPException(status_code=404, detail="pet not found.")
     pets[pet_index] = pet
     return pet
 
 @app.get('/pet/{pet_id}')
-def get_pet_by_id(pet_id: int):
+def get_pet(pet_id: int):
     for p in pets:
         if p.id == pet_id:
             return p
-    return {'detail':'pet not found.'}
+    raise HTTPException(status_code=404, detail="pet not found.")
 
 @app.get("/pet/findByStatus")
 def find_pets_by_status(status: str = "available"):
@@ -71,3 +71,13 @@ def find_pets_by_tags(tags: list[str]):
         if set(tags) <= set(p.tags):
             results.append(p)
     return results
+
+@app.delete('/pet/{pet_id}')
+def delete_pet(pet_id: int):
+    for i, p in enumerate(pets):
+        if pet_id == p.id:
+            del pets[i]
+            return {'message':'pet deleted successfully.'}
+    else:
+        raise HTTPException(status_code=404, detail="pet not found.")
+
