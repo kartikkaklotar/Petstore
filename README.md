@@ -22,4 +22,4 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 - It will run localserver to server the API
-- [local server](https://localhost:8000/docs)
+- [local server](http://localhost:8000/docs)
